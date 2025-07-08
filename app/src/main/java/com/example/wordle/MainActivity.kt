@@ -17,7 +17,13 @@ import domain.GameEvaluator.evaluateGuess
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ContextProvider.init(this)
 
+        setContent {
+            WordleTheme {
+                WordleGame()
+            }
+        }
         val result = evaluateGuess(
             guess = "ladle",
             target = "apple"
