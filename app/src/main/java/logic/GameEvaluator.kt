@@ -1,4 +1,7 @@
-package domain
+package logic
+
+import com.example.wordle.domain.models.EvaluatedLetter
+import com.example.wordle.domain.models.LetterState
 
 object GameEvaluator {
 
