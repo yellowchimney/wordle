@@ -5,9 +5,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
-import domain.GameEvaluator.evaluateGuess
-import domain.LetterState
 import com.example.wordle.data.repository.WordRepository
+import com.example.wordle.domain.models.LetterState
+import logic.GameEvaluator.evaluateGuess
 
 class WordleViewModel(application: Application) : AndroidViewModel(application) {
     private val wordRepository = WordRepository(getApplication())

@@ -1,4 +1,4 @@
-package domain
+package com.example.wordle.domain.models
 
 data class EvaluatedLetter(
     val char: Char,
