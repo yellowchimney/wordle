@@ -57,7 +57,7 @@ fun GameScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-
+        Spacer(modifier = Modifier.height(14.dp))
         // Word input row (5 boxes)
         for (rowIndex in 0 until 6) {
             when {
@@ -272,6 +272,7 @@ fun WinLoseBlock(
         fontSize = 30.sp,
         fontWeight = FontWeight.Bold
     )
+    Spacer(modifier = Modifier.height(10.dp))
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -302,11 +303,11 @@ fun LetterBox(letter: Char?, state: LetterState?, currentPosition: Int? = null, 
     Box(
         modifier = Modifier
             .size(60.dp)
-            .border(
-                2.dp,
-                Color.Gray,
-                RoundedCornerShape(8.dp)
-            )
+//            .border(
+//                2.dp,
+//                Color.Gray,
+//                RoundedCornerShape(8.dp)
+//            )
             .background(
                 backgroundColor,
                 RoundedCornerShape(8.dp)
