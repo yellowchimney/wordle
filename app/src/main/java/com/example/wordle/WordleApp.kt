@@ -37,8 +37,8 @@ fun WordleGame() {
             CenterAlignedTopAppBar(
                 colors = topAppBarColors(
 
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.tertiaryContainer,
                 ),
                 title = {
                     Text(stringResource(R.string.top_bar_title))
@@ -48,8 +48,8 @@ fun WordleGame() {
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier.height(48.dp),
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                contentColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.tertiaryContainer,
             ) {
                 Text(
                     modifier = Modifier
