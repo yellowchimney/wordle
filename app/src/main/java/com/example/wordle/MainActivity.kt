@@ -12,15 +12,9 @@ class MainActivity : ComponentActivity() {
         ContextProvider.init(this)
 
         setContent {
-            WordleTheme {
+            WordleTheme(dynamicColor = false) {
                 WordleGame()
             }
         }
-        val result = evaluateGuess(
-            guess = "ladle",
-            target = "apple"
-        )
-
-        println(result)
     }
 }

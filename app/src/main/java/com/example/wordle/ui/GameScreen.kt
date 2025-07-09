@@ -21,21 +21,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wordle.domain.models.EvaluatedLetter
+import com.example.wordle.domain.models.GameStatus
 import com.example.wordle.domain.models.LetterState
 
 @Composable
 fun GameScreen(
+    modifier: Modifier = Modifier,
+    gameStatus: Enum<GameStatus>,
     currentGuess: String,
     previousGuesses: List<List<EvaluatedLetter>>,
     keyboardResults: Map<Char, LetterState>,
     onSubmit: (String) -> Unit,
     onLetterClick: (Char) -> Unit,
     onBackspace: () -> Unit,
-    modifier: Modifier = Modifier
+    onRestart: () -> Unit
 ) {
     // Convert string to padded list for display
     val letters = currentGuess.padEnd(5).take(5).map { it.toString() }
@@ -86,18 +92,37 @@ fun GameScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Custom Wordle-style keyboard
-        WordleKeyboard(
-            onLetterClick = onLetterClick,
-            onBackspace = onBackspace,
-            onEnter = {
-                if (currentGuess.length == 5) {
-                    onSubmit(currentGuess)
-                }
-            },
-            keyboardResults = keyboardResults,
-            canSubmit = currentGuess.length == 5
-        )
+        when (gameStatus) {
+            GameStatus.IN_PROGRESS -> {
+                // Custom Wordle-style keyboard
+                WordleKeyboard(
+                    onLetterClick = onLetterClick,
+                    onBackspace = onBackspace,
+                    onEnter = {
+                        if (currentGuess.length == 5) {
+                            onSubmit(currentGuess)
+                        }
+                    },
+                    keyboardResults = keyboardResults,
+                    canSubmit = currentGuess.length == 5
+                )
+            }
+            GameStatus.WON -> {
+                WinLoseBlock(
+                    modifier = modifier,
+                    text = "You win!",
+                    onClick = onRestart
+                )
+            }
+            else -> {
+                WinLoseBlock(
+                    modifier = modifier,
+                    text = "You lose!",
+                    onClick = onRestart
+                )
+
+            }
+        }
     }
 }
 
@@ -216,6 +241,30 @@ fun KeyboardButton(
         )
     }
 }
+
+@Composable
+fun WinLoseBlock(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit
+) {
+    Text(
+        text = text,
+        fontSize = 30.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Button(
+        onClick = onClick
+    ) {
+        Text(
+            text = "Play Again",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+    Spacer(modifier = Modifier.height(10.dp))
+}
+
 
 @Composable
 fun LetterBox(letter: Char?, state: LetterState?) {

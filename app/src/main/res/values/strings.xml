@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Wordle</string>
+    <string name="top_bar_title">Wordle</string>
+    <string name="bottom_bar_title">""</string>
 </resources>
