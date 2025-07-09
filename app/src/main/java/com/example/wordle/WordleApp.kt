@@ -13,11 +13,13 @@ import androidx.compose.runtime.getValue
 fun WordleGame() {
     val viewModel: WordleViewModel = viewModel()
     val currentGuess by viewModel.currentGuess
-    val previousResults by viewModel.previousResults
+    val previousGuesses by viewModel.previousGuesses
+    val keyboardResults = viewModel.keyboardResults
 
     GameScreen(
         currentGuess = currentGuess,
-        previousResults = previousResults,
+        previousGuesses = previousGuesses,
+        keyboardResults = keyboardResults,
         onSubmit = { guess ->
             viewModel.submitGuess(currentGuess)
         },
