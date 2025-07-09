@@ -21,19 +21,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wordle.domain.models.EvaluatedLetter
 import com.example.wordle.domain.models.GameStatus
 import com.example.wordle.domain.models.LetterState
 
 @Composable
 fun GameScreen(
-    modifier: Modifier = Modifier,
     gameStatus: Enum<GameStatus>,
     currentGuess: String,
     previousGuesses: List<List<EvaluatedLetter>>,
@@ -41,10 +37,10 @@ fun GameScreen(
     onSubmit: (String) -> Unit,
     onLetterClick: (Char) -> Unit,
     onBackspace: () -> Unit,
+    modifier: Modifier = Modifier,
     onRestart: () -> Unit
 ) {
     // Convert string to padded list for display
-    val letters = currentGuess.padEnd(5).take(5).map { it.toString() }
     val currentPosition = currentGuess.length.coerceAtMost(5)
 
     Column(
@@ -61,9 +57,17 @@ fun GameScreen(
                 rowIndex < previousGuesses.size -> {
                     // Full evaluated row
                     val evaluatedRow = previousGuesses[rowIndex]
-                    Row {
-                        evaluatedRow.forEach { eval ->
-                            LetterBox(letter = eval.char, state = eval.state)
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Absolute.SpaceEvenly
+                    ){
+                        evaluatedRow.forEachIndexed { index, eval ->
+                            LetterBox(
+                                letter = eval.char,
+                                state = eval.state,
+                                currentPosition = currentPosition,
+                                index = index)
                         }
                     }
                 }
@@ -71,7 +75,11 @@ fun GameScreen(
                 rowIndex == previousGuesses.size -> {
                     // Current guess row
                     val letters = currentGuess.padEnd(5).toCharArray()
-                    Row {
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Absolute.SpaceEvenly
+                    ) {
                         letters.forEach { char ->
                             LetterBox(letter = if (char != ' ') char else null, state = null)
                         }
@@ -80,7 +88,11 @@ fun GameScreen(
 
                 else -> {
                     // Future guesses - completely empty
-                    Row {
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Absolute.SpaceEvenly,
+
+                    ){
                         repeat(5) {
                             LetterBox(letter = null, state = null)
                         }
@@ -267,7 +279,7 @@ fun WinLoseBlock(
 
 
 @Composable
-fun LetterBox(letter: Char?, state: LetterState?) {
+fun LetterBox(letter: Char?, state: LetterState?, currentPosition: Int? = null, index: Int? = null) {
     val backgroundColor = when {
         state == LetterState.CORRECT -> Color(0xFF6AAA64) // Green
         state == LetterState.PRESENT -> Color(0xFFC9B458) // Yellow
@@ -277,13 +289,24 @@ fun LetterBox(letter: Char?, state: LetterState?) {
 
     Box(
         modifier = Modifier
-            .size(48.dp)
-            .background(backgroundColor)
-            .border(1.dp, Color.Black),
+            .size(60.dp)
+            .border(
+                2.dp,
+                Color.Gray,
+                RoundedCornerShape(8.dp)
+            )
+            .background(
+                backgroundColor,
+                RoundedCornerShape(8.dp)
+            )
+            .padding(4.dp),
         contentAlignment = Alignment.Center
     ) {
         if (letter != null) {
-            Text(letter.toString().uppercase())
+            Text(
+                letter.toString().uppercase(),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold)
         }
     }
 }
