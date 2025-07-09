@@ -1,5 +1,6 @@
 package com.example.wordle.ui
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,9 +29,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.wordle.R
 import com.example.wordle.domain.models.EvaluatedLetter
 import com.example.wordle.domain.models.GameStatus
 import com.example.wordle.domain.models.LetterState
+import com.example.wordle.ui.theme.onTertiaryContainerDark
+
 
 @Composable
 fun GameScreen(
@@ -110,14 +115,14 @@ fun GameScreen(
             GameStatus.WON -> {
                 WinLoseBlock(
                     modifier = modifier,
-                    text = "You win!",
+                    text = stringResource(R.string.win_message),
                     onClick = onRestart
                 )
             }
             else -> {
                 WinLoseBlock(
                     modifier = modifier,
-                    text = "You lose!",
+                    text = stringResource(R.string.lose_message),
                     onClick = onRestart
                 )
 
@@ -254,10 +259,15 @@ fun WinLoseBlock(
         fontWeight = FontWeight.Bold
     )
     Button(
-        onClick = onClick
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+        )
     ) {
         Text(
-            text = "Play Again",
+            text = stringResource(R.string.restart_button),
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )

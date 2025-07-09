@@ -2,4 +2,7 @@
     <string name="app_name">Wordle</string>
     <string name="top_bar_title">Wordle</string>
     <string name="bottom_bar_title">""</string>
+    <string name="win_message">"You win!"</string>
+    <string name="lose_message">"You lose!"</string>
+    <string name="restart_button">"Play Again"</string>
 </resources>
