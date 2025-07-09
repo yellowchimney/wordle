@@ -17,6 +17,10 @@ class WordleViewModel(application: Application) : AndroidViewModel(application) 
     private val wordRepository = WordRepository(getApplication())
     private val target = wordRepository.getRandomAnswer()
 
+    init {
+        println(target)
+    }
+
     //game status
     private val _gameStatus = mutableStateOf(GameStatus.IN_PROGRESS)
     val gameStatus: MutableState<GameStatus> = _gameStatus

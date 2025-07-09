@@ -50,34 +50,39 @@ fun GameScreen(
     ) {
 
         // Word input row (5 boxes)
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(16.dp)
-        ) {
-            repeat(5) { index ->
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .border(
-                            2.dp,
-                            if (index == currentPosition) Color.Blue else Color.Gray,
-                            RoundedCornerShape(8.dp)
-                        )
-                        .background(
-                            Color.White,
-                            RoundedCornerShape(8.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = letters[index],
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
+        for (rowIndex in 0 until 6) {
+            when {
+                rowIndex < previousGuesses.size -> {
+                    // Full evaluated row
+                    val evaluatedRow = previousGuesses[rowIndex]
+                    Row {
+                        evaluatedRow.forEach { eval ->
+                            LetterBox(letter = eval.char, state = eval.state)
+                        }
+                    }
+                }
+
+                rowIndex == previousGuesses.size -> {
+                    // Current guess row
+                    val letters = currentGuess.padEnd(5).toCharArray()
+                    Row {
+                        letters.forEach { char ->
+                            LetterBox(letter = if (char != ' ') char else null, state = null)
+                        }
+                    }
+                }
+
+                else -> {
+                    // Future guesses - completely empty
+                    Row {
+                        repeat(5) {
+                            LetterBox(letter = null, state = null)
+                        }
+                    }
                 }
             }
         }
+
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -209,5 +214,27 @@ fun KeyboardButton(
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
+    }
+}
+
+@Composable
+fun LetterBox(letter: Char?, state: LetterState?) {
+    val backgroundColor = when {
+        state == LetterState.CORRECT -> Color(0xFF6AAA64) // Green
+        state == LetterState.PRESENT -> Color(0xFFC9B458) // Yellow
+        state == LetterState.ABSENT -> Color(0xFF787C7E) // Gray
+        else -> Color(0xFFD3D6DA) // Light gray
+    }
+
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .background(backgroundColor)
+            .border(1.dp, Color.Black),
+        contentAlignment = Alignment.Center
+    ) {
+        if (letter != null) {
+            Text(letter.toString().uppercase())
+        }
     }
 }
