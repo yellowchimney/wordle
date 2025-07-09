@@ -11,9 +11,9 @@ import logic.GameEvaluator.evaluateGuess
 
 class WordleViewModel(application: Application) : AndroidViewModel(application) {
     private val wordRepository = WordRepository(getApplication())
-    private val allowedWords = wordRepository.getAllowedWords()
-    private val targetWords = wordRepository.getTargetWords()
-    private val target = targetWords.random()
+//    private val allowedWords = wordRepository.getAllowedWords()
+//    private val targetWords = wordRepository.getTargetWords()
+   private val target = wordRepository.getRandomAnswer()
 
     // irina game status
 //    private val _gameStatus = mutableStateOf(GameStatus.IN_PROGRESS)
@@ -42,7 +42,7 @@ class WordleViewModel(application: Application) : AndroidViewModel(application) 
 
     fun submitGuess(guess: String) {
         // if guess not in set of allowed words then try again ?? HOW DO WE WANT TO HANDLE?
-        if (!allowedWords.contains(guess)) {
+        if (wordRepository.isValidWord(guess)) {
             return
         } else {
             // use Irina's function to give results
