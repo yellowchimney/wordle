@@ -21,15 +21,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wordle.domain.models.EvaluatedLetter
 import com.example.wordle.domain.models.GameStatus
 import com.example.wordle.domain.models.LetterState
 
 @Composable
 fun GameScreen(
+    modifier: Modifier = Modifier,
     gameStatus: Enum<GameStatus>,
     currentGuess: String,
     previousGuesses: List<List<EvaluatedLetter>>,
@@ -37,8 +41,7 @@ fun GameScreen(
     onSubmit: (String) -> Unit,
     onLetterClick: (Char) -> Unit,
     onBackspace: () -> Unit,
-    onRestart: () -> Unit,
-    modifier: Modifier = Modifier
+    onRestart: () -> Unit
 ) {
     // Convert string to padded list for display
     val letters = currentGuess.padEnd(5).take(5).map { it.toString() }
@@ -254,4 +257,6 @@ fun WinLoseBlock(
             fontWeight = FontWeight.Bold
         )
     }
+    Spacer(modifier = Modifier.height(10.dp))
 }
+
