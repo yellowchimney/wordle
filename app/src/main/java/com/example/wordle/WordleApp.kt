@@ -1,10 +1,8 @@
 package com.example.wordle
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import com.example.wordle.ui.GameScreen
 import com.example.wordle.ui.WordleViewModel
-import android.app.Application
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.getValue
 
@@ -14,9 +12,11 @@ fun WordleGame() {
     val viewModel: WordleViewModel = viewModel()
     val currentGuess by viewModel.currentGuess
     val previousGuesses by viewModel.previousGuesses
+    val gameStatus by viewModel.gameStatus
     val keyboardResults = viewModel.keyboardResults
 
     GameScreen(
+        gameStatus = gameStatus,
         currentGuess = currentGuess,
         previousGuesses = previousGuesses,
         keyboardResults = keyboardResults,
@@ -28,6 +28,7 @@ fun WordleGame() {
         },
         onBackspace = {
             viewModel.removeLetter()
-        }
+        },
+        onRestart = {viewModel.startNewGame()}
     )
 }

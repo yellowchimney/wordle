@@ -15,8 +15,9 @@ import androidx.compose.runtime.getValue
 
 class WordleViewModel(application: Application) : AndroidViewModel(application) {
     private val wordRepository = WordRepository(getApplication())
-    private val target = wordRepository.getRandomAnswer()
 
+    private val _target = mutableStateOf(wordRepository.getRandomAnswer())
+//    val target: MutableState<String>  = _target
     //game status
     private val _gameStatus = mutableStateOf(GameStatus.IN_PROGRESS)
     val gameStatus: MutableState<GameStatus> = _gameStatus
@@ -71,7 +72,7 @@ class WordleViewModel(application: Application) : AndroidViewModel(application) 
             return
         } else {
             // use Irina's function to give results
-            val results = evaluateGuess(guess, target)
+            val results = evaluateGuess(guess, _target.value)
 
             // update previous guesses with new word
             _previousGuesses.value = _previousGuesses.value + listOf(results)
@@ -85,6 +86,13 @@ class WordleViewModel(application: Application) : AndroidViewModel(application) 
             // clear current guess value after this turn added
             _currentGuess.value = ""
         }
+    }
+
+    fun startNewGame() {
+        _target.value = wordRepository.getRandomAnswer()
+        _currentGuess.value = ""
+        _previousGuesses.value = emptyList()
+        _gameStatus.value = GameStatus.IN_PROGRESS
     }
 }
 
