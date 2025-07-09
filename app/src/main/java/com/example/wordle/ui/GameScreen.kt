@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,12 +24,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.wordle.domain.models.EvaluatedLetter
 import com.example.wordle.domain.models.LetterState
 
 @Composable
 fun GameScreen(
     currentGuess: String,
-    previousResults: Map<Char, LetterState>,
+    previousGuesses: List<List<EvaluatedLetter>>,
+    keyboardResults: Map<Char, LetterState>,
     onSubmit: (String) -> Unit,
     onLetterClick: (Char) -> Unit,
     onBackspace: () -> Unit,
@@ -87,7 +90,7 @@ fun GameScreen(
                     onSubmit(currentGuess)
                 }
             },
-            previousResults = previousResults,
+            keyboardResults = keyboardResults,
             canSubmit = currentGuess.length == 5
         )
     }
@@ -99,7 +102,7 @@ fun WordleKeyboard(
     onLetterClick: (Char) -> Unit,
     onBackspace: () -> Unit,
     onEnter: () -> Unit,
-    previousResults: Map<Char, LetterState>,
+    keyboardResults: Map<Char, LetterState>,
     canSubmit: Boolean = true,
 ) {
     val keyboardRows = listOf(
@@ -123,7 +126,7 @@ fun WordleKeyboard(
                     KeyboardButton(
                         text = letter.toString(),
                         onClick = { onLetterClick(letter) },
-                        state = previousResults[letter] ?: LetterState.UNUSED,
+                        state = keyboardResults[letter] ?: LetterState.UNUSED,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -141,7 +144,7 @@ fun WordleKeyboard(
                 onClick = onEnter,
                 state = LetterState.UNUSED,
                 enabled = canSubmit,
-                modifier = Modifier.weight(1.5f)
+                modifier = Modifier.weight(2f)
             )
 
             // Letter keys
@@ -149,7 +152,7 @@ fun WordleKeyboard(
                 KeyboardButton(
                     text = letter.toString(),
                     onClick = { onLetterClick(letter) },
-                    state = previousResults[letter] ?: LetterState.UNUSED,
+                    state = keyboardResults[letter] ?: LetterState.UNUSED,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -198,7 +201,8 @@ fun KeyboardButton(
             disabledContainerColor = backgroundColor,
             disabledContentColor = textColor
         ),
-        shape = RoundedCornerShape(4.dp)
+        shape = RoundedCornerShape(4.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Text(
             text = text,

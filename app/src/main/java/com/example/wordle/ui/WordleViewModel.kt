@@ -3,29 +3,31 @@ package com.example.wordle.ui
 import android.app.Application
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import com.example.wordle.data.repository.WordRepository
+import com.example.wordle.domain.models.EvaluatedLetter
+import com.example.wordle.domain.models.GameStatus
 import com.example.wordle.domain.models.LetterState
 import logic.GameEvaluator.evaluateGuess
+import androidx.compose.runtime.getValue
 
 class WordleViewModel(application: Application) : AndroidViewModel(application) {
     private val wordRepository = WordRepository(getApplication())
-    private val allowedWords = wordRepository.getAllowedWords()
-    private val targetWords = wordRepository.getTargetWords()
-    private val target = targetWords.random()
+    private val target = wordRepository.getRandomAnswer()
 
-    // irina game status
-//    private val _gameStatus = mutableStateOf(GameStatus.IN_PROGRESS)
-//    val gameState: MutableState<GameStatus> = _gameStatus
+    //game status
+    private val _gameStatus = mutableStateOf(GameStatus.IN_PROGRESS)
+    val gameStatus: MutableState<GameStatus> = _gameStatus
 
     //state of current guess -from ui input
     private val _currentGuess = mutableStateOf("")
     val currentGuess: State<String> = _currentGuess
 
     //list of all previous letter results (EvaluatedLetter - char, state)
-    private val _previousResults = mutableStateOf(mapOf<Char, LetterState>())
-    val previousResults: State<Map<Char, LetterState>> = _previousResults
+    private val _previousGuesses = mutableStateOf(listOf<List<EvaluatedLetter>>())
+    val previousGuesses: State<List<List<EvaluatedLetter>>> = _previousGuesses
 
 
     fun addLetter(letter: Char) {
@@ -40,32 +42,45 @@ class WordleViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    val keyboardResults by derivedStateOf {
+        val results = mutableMapOf<Char, LetterState>()
+        _previousGuesses.value.flatten().forEach { evaluatedLetter ->
+            val letter = evaluatedLetter.char
+            val currentResult = evaluatedLetter.state
+            val existingResult = results[letter]
+
+            // Keep the best previous result for the keyboard render
+            val newResult = when {
+                currentResult == LetterState.CORRECT -> currentResult
+                currentResult == LetterState.PRESENT &&
+                        existingResult != LetterState.CORRECT -> currentResult
+
+                currentResult == LetterState.ABSENT &&
+                        existingResult == null -> currentResult
+
+                else -> existingResult ?: currentResult
+            }
+            results[letter] = newResult
+        }
+        results
+    }
+
     fun submitGuess(guess: String) {
         // if guess not in set of allowed words then try again ?? HOW DO WE WANT TO HANDLE?
-        if (!allowedWords.contains(guess)) {
+        if (!wordRepository.isValidWord(guess)) {
             return
         } else {
             // use Irina's function to give results
             val results = evaluateGuess(guess, target)
 
-            // use results to update colour states for letters and previous results list
-            results.forEach { evaluatedLetter ->
-                val currentResult = evaluatedLetter.state
-                val letter = evaluatedLetter.char
-                val existingResult = _previousResults.value[letter]
+            // update previous guesses with new word
+            _previousGuesses.value = _previousGuesses.value + listOf(results)
 
-                val newResult = when {
-                    currentResult == LetterState.CORRECT -> currentResult
-                    currentResult == LetterState.PRESENT &&
-                            existingResult != LetterState.CORRECT -> currentResult
-
-                    currentResult == LetterState.ABSENT &&
-                            existingResult == null -> currentResult
-
-                    else -> existingResult ?: currentResult
-                }
-
-                _previousResults.value = _previousResults.value + (letter to newResult)
+            // Check game status
+            if (results.all { it.state == LetterState.CORRECT }) {
+                _gameStatus.value = GameStatus.WON
+            } else if (_previousGuesses.value.size >= 6) {
+                _gameStatus.value = GameStatus.LOST
             }
             // clear current guess value after this turn added
             _currentGuess.value = ""
