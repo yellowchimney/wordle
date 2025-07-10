@@ -85,9 +85,7 @@ fun GameScreen(
                     onEnter = {
                         if (currentGuess.length == 5) {
                             onSubmit(currentGuess)
-                            if (shouldShake) {
-                                enterIsClicked++
-                            }
+                            enterIsClicked++
                         }
                     },
                     keyboardResults = keyboardResults,
