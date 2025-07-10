@@ -1,6 +1,6 @@
 package com.example.wordle.ui
 
-import android.text.BoringLayout
+
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -40,7 +40,6 @@ import com.example.wordle.domain.models.GameStatus
 import com.example.wordle.domain.models.LetterState
 import kotlin.math.roundToInt
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -85,11 +84,8 @@ fun GameScreen(
                     onBackspace = onBackspace,
                     onEnter = {
                         if (currentGuess.length == 5) {
-//                            onSubmit(currentGuess)
-                            if (shouldShake) {
-                                enterIsClicked++
-                            }
                             onSubmit(currentGuess)
+                            enterIsClicked++
                         }
                     },
                     keyboardResults = keyboardResults,
@@ -242,17 +238,18 @@ fun WinLoseBlock(
         fontSize = 30.sp,
         fontWeight = FontWeight.Bold
     )
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(8.dp))
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+            containerColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.tertiaryContainer
         )
     ) {
         Text(
+            modifier = Modifier.padding(10.dp),
             text = stringResource(R.string.restart_button),
-            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            color = MaterialTheme.colorScheme.tertiaryContainer,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
@@ -273,11 +270,6 @@ fun LetterBox(letter: Char?, state: LetterState?, currentPosition: Int? = null, 
     Box(
         modifier = Modifier
             .size(60.dp)
-//            .border(
-//                2.dp,
-//                Color.Gray,
-//                RoundedCornerShape(8.dp)
-//            )
             .background(
                 backgroundColor,
                 RoundedCornerShape(8.dp)
@@ -295,11 +287,12 @@ fun LetterBox(letter: Char?, state: LetterState?, currentPosition: Int? = null, 
 }
 
 @Composable
-fun Modifier.shake(enterIsClicked: Int, shouldShake: Boolean, ): Modifier {
+fun Modifier.shake(enterIsClicked: Int, shouldShake: Boolean): Modifier {
     val offsetX = remember { Animatable(0f) }
+    var isFirstLoad by remember { mutableStateOf(true) }
 
     LaunchedEffect(enterIsClicked) {
-        if (enterIsClicked > 0 && shouldShake) {
+        if (!isFirstLoad && shouldShake) {
             // Shake: left-right-left-right-neutral
             offsetX.animateTo(
                 targetValue = 0f,
@@ -308,7 +301,9 @@ fun Modifier.shake(enterIsClicked: Int, shouldShake: Boolean, ): Modifier {
             listOf(-12f, 12f, -8f, 8f, -4f, 4f, 0f).forEach {
                 offsetX.animateTo(it, animationSpec = tween(durationMillis = 40))
             }
-
+        }
+        if (isFirstLoad) {
+            isFirstLoad = false
         }
     }
 
