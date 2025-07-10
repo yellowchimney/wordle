@@ -1,6 +1,6 @@
 package com.example.wordle.ui
 
-import android.text.BoringLayout
+
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -40,7 +40,6 @@ import com.example.wordle.domain.models.GameStatus
 import com.example.wordle.domain.models.LetterState
 import kotlin.math.roundToInt
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -273,11 +272,6 @@ fun LetterBox(letter: Char?, state: LetterState?, currentPosition: Int? = null, 
     Box(
         modifier = Modifier
             .size(60.dp)
-//            .border(
-//                2.dp,
-//                Color.Gray,
-//                RoundedCornerShape(8.dp)
-//            )
             .background(
                 backgroundColor,
                 RoundedCornerShape(8.dp)
@@ -295,11 +289,12 @@ fun LetterBox(letter: Char?, state: LetterState?, currentPosition: Int? = null, 
 }
 
 @Composable
-fun Modifier.shake(enterIsClicked: Int, shouldShake: Boolean, ): Modifier {
+fun Modifier.shake(enterIsClicked: Int, shouldShake: Boolean): Modifier {
     val offsetX = remember { Animatable(0f) }
+    var isFirstLoad by remember { mutableStateOf(true) }
 
     LaunchedEffect(enterIsClicked) {
-        if (enterIsClicked > 0 && shouldShake) {
+        if (!isFirstLoad && shouldShake) {
             // Shake: left-right-left-right-neutral
             offsetX.animateTo(
                 targetValue = 0f,
@@ -308,7 +303,9 @@ fun Modifier.shake(enterIsClicked: Int, shouldShake: Boolean, ): Modifier {
             listOf(-12f, 12f, -8f, 8f, -4f, 4f, 0f).forEach {
                 offsetX.animateTo(it, animationSpec = tween(durationMillis = 40))
             }
-
+        }
+        if (isFirstLoad) {
+            isFirstLoad = false
         }
     }
 
