@@ -30,7 +30,6 @@ class WordleViewModel(application: Application) : AndroidViewModel(application) 
     private val _previousGuesses = mutableStateOf(listOf<List<EvaluatedLetter>>())
     val previousGuesses: State<List<List<EvaluatedLetter>>> = _previousGuesses
 
-
     fun addLetter(letter: Char) {
         if (_currentGuess.value.length < 5) {
             _currentGuess.value += letter
@@ -93,6 +92,11 @@ class WordleViewModel(application: Application) : AndroidViewModel(application) 
         _currentGuess.value = ""
         _previousGuesses.value = emptyList()
         _gameStatus.value = GameStatus.IN_PROGRESS
+    }
+
+    fun shouldShake(guess: String) : Boolean {
+        println(wordRepository.isValidWord(guess))
+        return (!wordRepository.isValidWord(guess))
     }
 }
 

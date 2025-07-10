@@ -77,7 +77,8 @@ fun WordleGame() {
             onBackspace = {
                 viewModel.removeLetter()
             },
-            onRestart = {viewModel.startNewGame()}
+            onRestart = {viewModel.startNewGame()},
+            shouldShake = viewModel.shouldShake(currentGuess)
         )
     }
 }
