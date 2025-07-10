@@ -272,17 +272,18 @@ fun WinLoseBlock(
         fontSize = 30.sp,
         fontWeight = FontWeight.Bold
     )
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(8.dp))
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+            containerColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.tertiaryContainer
         )
     ) {
         Text(
+            modifier = Modifier.padding(10.dp),
             text = stringResource(R.string.restart_button),
-            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            color = MaterialTheme.colorScheme.tertiaryContainer,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
