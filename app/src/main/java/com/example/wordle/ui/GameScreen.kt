@@ -85,11 +85,10 @@ fun GameScreen(
                     onBackspace = onBackspace,
                     onEnter = {
                         if (currentGuess.length == 5) {
-//                            onSubmit(currentGuess)
+                            onSubmit(currentGuess)
                             if (shouldShake) {
                                 enterIsClicked++
                             }
-                            onSubmit(currentGuess)
                         }
                     },
                     keyboardResults = keyboardResults,
